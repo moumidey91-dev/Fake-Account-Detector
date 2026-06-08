@@ -2,8 +2,11 @@ import os
 import pickle
 import numpy as np
 import pandas as pd
+import sqlite3
+import random
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 
 def safe_int(val, default=0):
     try:
@@ -71,6 +74,32 @@ def load_models():
 
 # Initial model load
 load_models()
+
+# --- Database Setup ---
+DB_PATH = os.path.join(BASE_DIR, 'database.db')
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            is_verified BOOLEAN DEFAULT FALSE
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS otps (
+            email TEXT PRIMARY KEY,
+            otp TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 def generate_explanation(features_df, model, is_fake):
     """
@@ -175,6 +204,116 @@ def generate_explanation(features_df, model, is_fake):
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({"status": "active", "message": "Welcome to the Fake Shield ML API. The server is running successfully."})
+
+# --- Auth Endpoints ---
+@app.route('/api/auth/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not all([name, email, password]):
+        return jsonify({"success": False, "error": "All fields are required"}), 400
+        
+    hashed_password = generate_password_hash(password)
+    otp = str(random.randint(100000, 999999))
+    
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute("SELECT is_verified FROM users WHERE email = ?", (email,))
+        user = c.fetchone()
+        
+        if user:
+            if user[0]:
+                return jsonify({"success": False, "error": "Email already registered and verified."}), 400
+            else:
+                c.execute("UPDATE users SET name=?, password=? WHERE email=?", (name, hashed_password, email))
+        else:
+            c.execute("INSERT INTO users (name, email, password, is_verified) VALUES (?, ?, ?, 0)", (name, email, hashed_password))
+            
+        c.execute("INSERT OR REPLACE INTO otps (email, otp) VALUES (?, ?)", (email, otp))
+        conn.commit()
+        conn.close()
+        
+        print("\n" + "="*50)
+        print(f"📧 MOCK EMAIL SENT TO: {email}")
+        print(f"🔢 OTP CODE: {otp}")
+        print("="*50 + "\n")
+        
+        return jsonify({"success": True, "message": "OTP sent to email. Please verify."})
+        
+    except sqlite3.IntegrityError:
+        return jsonify({"success": False, "error": "Email already registered."}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/auth/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.get_json()
+    email = data.get('email')
+    otp = data.get('otp')
+    
+    if not all([email, otp]):
+        return jsonify({"success": False, "error": "Email and OTP are required"}), 400
+        
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute("SELECT otp FROM otps WHERE email = ?", (email,))
+        row = c.fetchone()
+        
+        if not row or row[0] != otp:
+            conn.close()
+            return jsonify({"success": False, "error": "Invalid or expired OTP."}), 400
+            
+        c.execute("UPDATE users SET is_verified = 1 WHERE email = ?", (email,))
+        c.execute("DELETE FROM otps WHERE email = ?", (email,))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({"success": True, "message": "Account verified successfully. You can now sign in."})
+        
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/auth/signin', methods=['POST'])
+def signin():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not all([email, password]):
+        return jsonify({"success": False, "error": "Email and password are required"}), 400
+        
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute("SELECT id, name, password, is_verified FROM users WHERE email = ?", (email,))
+        user = c.fetchone()
+        conn.close()
+        
+        if not user:
+            return jsonify({"success": False, "error": "User not found."}), 404
+            
+        if not check_password_hash(user[2], password):
+            return jsonify({"success": False, "error": "Incorrect password."}), 401
+            
+        if not user[3]:
+            return jsonify({"success": False, "error": "Account not verified. Please verify your email.", "requires_verification": True}), 403
+            
+        return jsonify({
+            "success": True, 
+            "message": "Signed in successfully",
+            "user": {"id": user[0], "name": user[1], "email": email}
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/detect', methods=['POST'])
 def detect():
