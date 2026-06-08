@@ -23,6 +23,7 @@ import sys
 try:
     cli = sys.modules['flask.cli']
     cli.show_server_banner = lambda *x: None
+except Exception:
     pass
 
 app = Flask(__name__)
