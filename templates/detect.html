@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}FakeShield - Run Profile Verification{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="detect-container">
+        
+        <!-- Verification Form Panel (Left) -->
+        <div class="verification-panel">
+            <div class="panel-header">
+                <h1 class="panel-title">Verify Profile Metrics</h1>
+                <p class="panel-desc">Provide the social media account metrics below to run the detection model.</p>
+            </div>
+            
+            <form id="verificationForm" method="POST" action="{{ url_for('detect') }}" class="verification-form">
+                
+                <!-- Username -->
+                <div class="form-group form-group-full">
+                    <label for="username" class="form-label">
+                        <i class="fa-solid fa-at"></i> Profile Username
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" class="form-input" placeholder="e.g. bot_detect_99" required value="{{ form_data.username|default('') }}">
+                        <i class="fa-solid fa-signature input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Followers -->
+                <div class="form-group">
+                    <label for="followers" class="form-label">
+                        <i class="fa-solid fa-users"></i> Followers Count
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="followers" name="followers" min="0" class="form-input" placeholder="e.g. 1200" required value="{{ form_data.followers|default('') }}">
+                        <i class="fa-solid fa-user-plus input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Following -->
+                <div class="form-group">
+                    <label for="following" class="form-label">
+                        <i class="fa-solid fa-user-check"></i> Following Count
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="following" name="following" min="0" class="form-input" placeholder="e.g. 350" required value="{{ form_data.following|default('') }}">
+                        <i class="fa-solid fa-user-minus input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Number of Posts -->
+                <div class="form-group">
+                    <label for="posts" class="form-label">
+                        <i class="fa-solid fa-images"></i> Number of Posts
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="posts" name="posts" min="0" class="form-input" placeholder="e.g. 85" required value="{{ form_data.posts|default('') }}">
+                        <i class="fa-solid fa-image input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Bio Length -->
+                <div class="form-group">
+                    <label for="bio_length" class="form-label">
+                        <i class="fa-solid fa-align-left"></i> Bio Length (Characters)
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="bio_length" name="bio_length" min="0" max="150" class="form-input" placeholder="e.g. 64" required value="{{ form_data.bio_length|default('') }}">
+                        <i class="fa-solid fa-text-width input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="form-group">
+                    <label for="profile_pic" class="form-label">
+                        <i class="fa-solid fa-user-tie"></i> Profile Picture
+                    </label>
+                    <div class="input-wrapper select-wrapper">
+                        <select id="profile_pic" name="profile_pic" class="form-select" required>
+                            {% if form_data and form_data.profile_pic == '1' %}
+                            <option value="1" selected>Yes</option>
+                            <option value="0">No</option>
+                            {% else %}
+                            <option value="1">Yes</option>
+                            <option value="0" selected>No</option>
+                            {% endif %}
+                        </select>
+                        <i class="fa-solid fa-image-portrait input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Verified Status -->
+                <div class="form-group">
+                    <label for="verified" class="form-label">
+                        <i class="fa-solid fa-circle-check"></i> Account Verified
+                    </label>
+                    <div class="input-wrapper select-wrapper">
+                        <select id="verified" name="verified" class="form-select" required>
+                            {% if form_data and form_data.verified == '1' %}
+                            <option value="0">No</option>
+                            <option value="1" selected>Yes</option>
+                            {% else %}
+                            <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                            {% endif %}
+                        </select>
+                        <i class="fa-solid fa-award input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Account Age -->
+                <div class="form-group">
+                    <label for="account_age" class="form-label">
+                        <i class="fa-solid fa-calendar-days"></i> Account Age (Days)
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="account_age" name="account_age" min="0" class="form-input" placeholder="e.g. 540" required value="{{ form_data.account_age|default('') }}">
+                        <i class="fa-solid fa-clock input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Engagement Rate -->
+                <div class="form-group">
+                    <label for="engagement_rate" class="form-label">
+                        <i class="fa-solid fa-gauge-high"></i> Engagement Rate (%)
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="engagement_rate" name="engagement_rate" min="0" max="100" step="0.01" class="form-input" placeholder="e.g. 3.45" required value="{{ form_data.engagement_rate|default('') }}">
+                        <i class="fa-solid fa-percent input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary form-submit">
+                    <i class="fa-solid fa-shield-halved"></i> Run Verification Audit
+                </button>
+            </form>
+        </div>
+        
+        <!-- Verification Results Panel (Right) -->
+        <div class="results-panel">
+            
+            <!-- 1. Spinner (Hidden by default) -->
+            <div id="resultsSpinner" class="spinner-container">
+                <div class="spinner"></div>
+                <div class="loading-text">Analyzing profile signatures...</div>
+            </div>
+
+            {% if result %}
+            <!-- 2. Results Output (Shown if result available from direct post fallback) -->
+            <div id="resultsOutput" style="display: block;">
+                <div class="result-header">
+                    <div id="resBadge">
+                        {% if result.is_fake %}
+                        <div class="result-badge badge-fake">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            {{ result.prediction }}
+                        </div>
+                        {% else %}
+                        <div class="result-badge badge-real">
+                            <i class="fa-solid fa-circle-check"></i>
+                            {{ result.prediction }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <h2 class="result-username" id="resUsername"><span>@</span>{{ form_data.username }}</h2>
+                </div>
+                
+                <div class="metrics-row" style="margin-top: 1.5rem;">
+                    <div class="metric-card">
+                        <span class="metric-label">Risk Level</span>
+                        {% if result.risk_class == 'risk-low' %}
+                        <span id="resRiskLevel" class="metric-value risk-low">{{ result.risk_level }}</span>
+                        {% elif result.risk_class == 'risk-mod-low' %}
+                        <span id="resRiskLevel" class="metric-value risk-mod-low">{{ result.risk_level }}</span>
+                        {% elif result.risk_class == 'risk-medium' %}
+                        <span id="resRiskLevel" class="metric-value risk-medium">{{ result.risk_level }}</span>
+                        {% elif result.risk_class == 'risk-high' %}
+                        <span id="resRiskLevel" class="metric-value risk-high">{{ result.risk_level }}</span>
+                        {% else %}
+                        <span id="resRiskLevel" class="metric-value">{{ result.risk_level }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Engine Decision</span>
+                        <span id="resConfidence" class="metric-value">{{ result.confidence }}</span>
+                    </div>
+                </div>
+                
+                <div class="confidence-gauge-container" style="margin-top: 1.5rem;">
+                    <div class="gauge-header">
+                        <span>Analysis Confidence</span>
+                        <span id="resConfidenceText">{{ result.confidence }}</span>
+                    </div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="resGaugeFill" style="width: {{ result.confidence }};"></div>
+                    </div>
+                </div>
+                
+                <div class="explanations-section" style="margin-top: 2rem;">
+                    <span class="section-title">
+                        <i class="fa-solid fa-circle-info"></i> Detection Explanation
+                    </span>
+                    <div class="explanations-list" id="resExplanations">
+                        {% for exp in result.explanations %}
+                        <div class="explanation-item exp-{{ exp.type }}">
+                            <div class="exp-title">
+                                {% if exp.type == 'danger' %}
+                                    <i class="fa-solid fa-circle-xmark"></i>
+                                {% elif exp.type == 'warning' %}
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                {% elif exp.type == 'success' %}
+                                    <i class="fa-solid fa-circle-check"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-circle-info"></i>
+                                {% endif %}
+                                {{ exp.title }}
+                            </div>
+                            <div class="exp-desc">{{ exp.desc }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="model-info-footer">
+                    Model Used: <span id="resModelUsed" style="font-weight: 600; color: var(--text-primary);">{{ result.model_used }}</span>
+                </div>
+            </div>
+            {% else %}
+            <!-- 3. Placeholder State (Shown initially) -->
+            <div id="resultsPlaceholder" class="results-placeholder">
+                <i class="fa-solid fa-shield-halved placeholder-icon"></i>
+                <h3 class="placeholder-title">Awaiting Audit Input</h3>
+                <p class="placeholder-desc">Fill out the profile metrics form on the left and start verification to see predictions here.</p>
+            </div>
+            
+            <!-- 4. Results Output (Hidden initially, shown by JS) -->
+            <div id="resultsOutput" style="display: none;">
+                <div class="result-header">
+                    <div id="resBadge"></div>
+                    <h2 class="result-username" id="resUsername"></h2>
+                </div>
+                
+                <div class="metrics-row" style="margin-top: 1.5rem;">
+                    <div class="metric-card">
+                        <span class="metric-label">Risk Level</span>
+                        <span id="resRiskLevel" class="metric-value">Low</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Engine Decision</span>
+                        <span id="resConfidence" class="metric-value">0.0%</span>
+                    </div>
+                </div>
+                
+                <div class="confidence-gauge-container" style="margin-top: 1.5rem;">
+                    <div class="gauge-header">
+                        <span>Analysis Confidence</span>
+                        <span id="resConfidenceText">0.0%</span>
+                    </div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="resGaugeFill"></div>
+                    </div>
+                </div>
+                
+                <div class="explanations-section" style="margin-top: 2rem;">
+                    <span class="section-title">
+                        <i class="fa-solid fa-circle-info"></i> Detection Explanation
+                    </span>
+                    <div class="explanations-list" id="resExplanations"></div>
+                </div>
+                
+                <div class="model-info-footer">
+                    Model Used: <span id="resModelUsed" style="font-weight: 600; color: var(--text-primary);"></span>
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FakeShield - Social Media Profile Verifier{% endblock %}</title>
+    <!-- Prevent favicon 404 error -->
+    <link rel="icon" href="data:,">
+    <!-- Google Fonts: Inter & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Background Animated Gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    
+    <header class="header">
+        <div class="container navbar">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span>Fake<span class="logo-accent">Shield</span></span>
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{{ url_for('index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                            <i class="fa-solid fa-house nav-icon"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('detect') }}" class="nav-link {% if request.path == '/detect' %}active{% endif %}">
+                            <i class="fa-solid fa-circle-nodes nav-icon"></i> Detect
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('about') }}" class="nav-link {% if request.path == '/about' %}active{% endif %}">
+                            <i class="fa-solid fa-circle-info nav-icon"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light mode">
+                            <i class="fa-solid fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="{{ url_for('index') }}" class="logo">
+                        <i class="fa-solid fa-shield-halved logo-icon"></i>
+                        <span>Fake<span class="logo-accent">Shield</span></span>
+                    </a>
+                    <p class="footer-desc">Empowering truth online with AI-driven analysis. Protect your community from fake profiles and misinformation.</p>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Platform</h4>
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('detect') }}">Detect</a>
+                    <a href="{{ url_for('about') }}">About</a>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Legal & Support</h4>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FakeShield. Powered by Machine Learning.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

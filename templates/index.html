@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}FakeShield - Social Media Profile Verifier (Home){% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="hero-section modern-hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-shield-halved"></i> AI-Powered Protection
+                </div>
+                <h1 class="hero-title">
+                    AI-Powered Fake Content <span class="text-gradient">Detection</span>
+                </h1>
+                <p class="hero-desc">
+                    Instantly detect fake news, misinformation, fraudulent accounts, and suspicious online profiles using state-of-the-art machine learning algorithms.
+                </p>
+                <div class="hero-cta">
+                    <a href="{{ url_for('detect') }}" class="btn btn-primary btn-lg btn-glow">
+                        <i class="fa-solid fa-microchip"></i> Analyze Now
+                    </a>
+                    <a href="{{ url_for('about') }}" class="btn btn-secondary btn-lg">
+                        Learn More <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="hero-trusted">
+                    <p>Powered by XGBoost & Random Forest</p>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <div class="hero-image-glow"></div>
+                <img src="{{ url_for('static', filename='img/hero_ai.png') }}" alt="AI Visualization" class="hero-image floating">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section section-padding">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Advanced Threat <span class="text-gradient">Detection</span></h2>
+                <p>Equipped with cutting-edge cybersecurity and data science technology.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="glass-card feature-card-modern">
+                    <div class="icon-box"><i class="fa-solid fa-brain"></i></div>
+                    <h3>Machine Learning</h3>
+                    <p>Leverages deep analytics and classification algorithms to accurately identify fraudulent patterns.</p>
+                </div>
+                <div class="glass-card feature-card-modern">
+                    <div class="icon-box"><i class="fa-solid fa-shield"></i></div>
+                    <h3>Trust Score</h3>
+                    <p>Get an immediate, quantitative trust score based on dozens of profile parameters.</p>
+                </div>
+                <div class="glass-card feature-card-modern">
+                    <div class="icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Real-Time Check</h3>
+                    <p>Process accounts and content in milliseconds with optimized ML inference pipelines.</p>
+                </div>
+                <div class="glass-card feature-card-modern">
+                    <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Detailed Insights</h3>
+                    <p>Explainable AI breaks down the exact reasons why a profile or content was flagged.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section section-padding bg-alt">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>How FakeShield <span class="text-gradient">Works</span></h2>
+                <p>Three simple steps to verify online authenticity.</p>
+            </div>
+            <div class="steps-container">
+                <div class="step-card glass-card">
+                    <div class="step-number text-gradient">01</div>
+                    <h3>Input Content</h3>
+                    <p>Provide profile data or text into our secure analysis engine.</p>
+                </div>
+                <div class="step-connector"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="step-card glass-card">
+                    <div class="step-number text-gradient">02</div>
+                    <h3>ML Analysis</h3>
+                    <p>Our algorithms extract features and run inferences instantly.</p>
+                </div>
+                <div class="step-connector"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="step-card glass-card">
+                    <div class="step-number text-gradient">03</div>
+                    <h3>Get Results</h3>
+                    <p>Receive a detailed risk report and explainable AI insights.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section section-padding">
+        <div class="container">
+            <div class="stats-grid glass-panel">
+                <div class="stat-item">
+                    <div class="stat-value text-gradient">99.4%</div>
+                    <div class="stat-label">Model Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value text-gradient">2.4M+</div>
+                    <div class="stat-label">Analyses</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value text-gradient">< 50ms</div>
+                    <div class="stat-label">Detection Speed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value text-gradient">24/7</div>
+                    <div class="stat-label">Monitoring</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section section-padding">
+        <div class="container benefits-container">
+            <div class="benefits-content">
+                <h2>Why Choose <span class="text-gradient">FakeShield</span>?</h2>
+                <ul class="benefits-list">
+                    <li>
+                        <div class="benefit-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="benefit-text">
+                            <strong>Unmatched Accuracy</strong>
+                            <p>Trained on millions of datasets for precise fraud detection.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="benefit-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="benefit-text">
+                            <strong>Explainable AI</strong>
+                            <p>We don't just give a score; we tell you why.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="benefit-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="benefit-text">
+                            <strong>Enterprise Security</strong>
+                            <p>Your data is processed securely with zero-retention policies.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="benefits-visual">
+                <div class="glass-card dashboard-mockup">
+                    <div class="mockup-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                    </div>
+                    <div class="mockup-body">
+                        <div class="mockup-line w-100"></div>
+                        <div class="mockup-line w-75"></div>
+                        <div class="mockup-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section section-padding bg-alt">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Trusted by <span class="text-gradient">Professionals</span></h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="glass-card testimonial-card">
+                    <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                    <p class="testimonial-text">"FakeShield completely transformed how we verify our user onboarding. The API is blazingly fast."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="author-info">
+                            <strong>Sarah Jenkins</strong>
+                            <span>Product Manager</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card testimonial-card">
+                    <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
+                    <p class="testimonial-text">"The Explainable AI insights are a game changer. We finally understand why certain accounts are flagged."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                        <div class="author-info">
+                            <strong>David Chen</strong>
+                            <span>Data Scientist</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section section-padding">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2>Frequently Asked <span class="text-gradient">Questions</span></h2>
+            </div>
+            <div class="faq-accordion">
+                <details class="glass-card faq-item">
+                    <summary>What machine learning models do you use?</summary>
+                    <div class="faq-content">We primarily use an optimized XGBoost Classifier alongside a Random Forest fallback model to ensure maximum accuracy and reliability.</div>
+                </details>
+                <details class="glass-card faq-item">
+                    <summary>How fast is the verification process?</summary>
+                    <div class="faq-content">Inference typically takes under 50 milliseconds, making it suitable for real-time applications.</div>
+                </details>
+                <details class="glass-card faq-item">
+                    <summary>Is my input data stored?</summary>
+                    <div class="faq-content">No. We process the features purely in-memory for inference and do not store any personally identifiable information (PII).</div>
+                </details>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                const isLightMode = document.body.classList.contains('light-mode');
+                themeToggle.innerHTML = isLightMode ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            });
+        }
+    });
+</script>
+{% endblock %}

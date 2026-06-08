@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}FakeShield - Machine Learning & Verification Logic{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="about-grid">
+        
+        <!-- Left Side: Informative Articles -->
+        <div class="about-content">
+            <div class="about-header">
+                <span class="hero-badge" style="margin-bottom: 1rem;"><i class="fa-solid fa-circle-info"></i> Inside FakeShield</span>
+                <h1>Behind the Verification Engine</h1>
+                <p>Learn how machine learning models separate genuine social profiles from bot accounts.</p>
+            </div>
+            
+            <!-- Section 1: The Threat -->
+            <section class="about-section">
+                <h2><i class="fa-solid fa-shield-virus"></i> The Problem of Sybil Profiles</h2>
+                <p>
+                    Fake profiles, automated spambots, and sybil accounts are widely deployed to spread misinformation, conduct financial scams, inflate engagement metrics artificially, and perform phishing attacks. Standard checks (like counting followers) are easily bypassed by bots. FakeShield employs an advanced ensemble classifier to cross-examine ten discrete signals simultaneously.
+                </p>
+            </section>
+            
+            <!-- Section 2: Machine Learning Models -->
+            <section class="about-section">
+                <h2><i class="fa-solid fa-code-fork"></i> XGBoost & Random Forest Models</h2>
+                <p>
+                    FakeShield uses two of the most powerful tree-based ensemble models in modern machine learning:
+                </p>
+                <ul>
+                    <li>
+                        <strong>XGBoost Classifier (Primary):</strong> Extreme Gradient Boosting builds decision trees sequentially. Each new tree corrects errors made by prior trees, optimizing a logistic loss function. It handles complex, non-linear feature interactions (like low post count mixed with high following count) with extreme precision.
+                    </li>
+                    <li>
+                        <strong>Random Forest (Fallback):</strong> An ensemble bagging classifier that trains multiple independent decision trees on bootstrapped subsets of the data. It averages predictions to reduce variance. If XGBoost is unavailable, the system automatically falls back to this model to maintain service continuity.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 3: Feature Engineering -->
+            <section class="about-section">
+                <h2><i class="fa-solid fa-calculator"></i> Signal Preprocessing & Interpretations</h2>
+                <p>
+                    Raw parameters input by users are mathematically engineered before feeding into the classifiers:
+                </p>
+                <ul>
+                    <li><strong>Username Character Analysis:</strong> Calculates the ratio of numerical digits in the username. High ratios (e.g. <code>user1827493</code> -> 70% digits) are strongly correlated with automated account creation scripts.</li>
+                    <li><strong>Following-to-Follower Ratio:</strong> Accounts that follow thousands of users but maintain single-digit followers are flagged as follow-for-follow spam bots.</li>
+                    <li><strong>Engagement-to-Follower Consistency:</strong> Accounts with high follower counts but near-zero engagement rate suggest bought or dead followers, whereas small accounts with massive engagement spikes suggest coordination pods.</li>
+                    <li><strong>Longevity Thresholds:</strong> Newer accounts are mathematically penalized since freshly created profiles are statistically prone to spam campaigns.</li>
+                </ul>
+            </section>
+        </div>
+        
+        <!-- Right Side: Tech Stack & Model Status -->
+        <div class="tech-sidebar">
+            <div class="tech-stack-panel">
+                <h2 class="tech-stack-title">System Information</h2>
+                
+                <div class="tech-list">
+                    <!-- Loaded Model -->
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <div class="tech-info">
+                            <h3>Active ML Engine</h3>
+                            <p id="systemModelStatus" style="font-weight: 600; color: var(--primary-light);">
+                                {% if model_used %}
+                                    {{ model_used }}
+                                {% else %}
+                                    XGBoost / Random Forest
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Backend -->
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <i class="fa-brands fa-python"></i>
+                        </div>
+                        <div class="tech-info">
+                            <h3>Backend Framework</h3>
+                            <p>Python Flask 3.1 & Pandas</p>
+                        </div>
+                    </div>
+                    
+                    <!-- ML Frameworks -->
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <div class="tech-info">
+                            <h3>Core Libraries</h3>
+                            <p>XGBoost 3.2, Scikit-learn 1.8</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Interface -->
+                    <div class="tech-item">
+                        <div class="tech-icon">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div class="tech-info">
+                            <h3>User Interface</h3>
+                            <p>Vanilla CSS & HTML5 (Glassmorphism design)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
