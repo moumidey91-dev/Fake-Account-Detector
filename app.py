@@ -172,6 +172,10 @@ def generate_explanation(features_df, model, is_fake):
         
     return explanations
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({"status": "active", "message": "Welcome to the Fake Shield ML API. The server is running successfully."})
+
 @app.route('/detect', methods=['POST'])
 def detect():
     global xgboost_model, rf_model, model_used
