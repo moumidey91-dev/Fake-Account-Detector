@@ -7,8 +7,6 @@ import PlatformForm from './pages/PlatformForm';
 import NewsDetect from './pages/NewsDetect';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
 import VerifyOTP from './pages/VerifyOTP';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -26,8 +24,6 @@ function App() {
               <Route path="/news-detect" element={<NewsDetect />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
               <Route path="/verify-otp" element={<VerifyOTP />} />
             </Routes>
           </main>

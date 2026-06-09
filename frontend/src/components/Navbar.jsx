@@ -1,10 +1,15 @@
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import SignInModal from './SignInModal';
+import SignUpModal from './SignUpModal';
 
 import { FiSearch } from 'react-icons/fi';
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
   return (
     <nav className="navbar">
@@ -30,14 +35,33 @@ function Navbar() {
         </Link>
         
         <div className="auth-buttons">
-          <Link to="/signin" className="nav-btn signin-btn">Sign In</Link>
-          <Link to="/signup" className="nav-btn signup-btn">Sign Up</Link>
+          <button className="nav-btn signin-btn" onClick={() => setIsSignInOpen(true)}>Sign In</button>
+          <button className="nav-btn signup-btn" onClick={() => setIsSignUpOpen(true)}>Sign Up</button>
         </div>
 
         <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle Theme">
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
       </div>
+
+      {isSignInOpen && (
+        <SignInModal 
+          onClose={() => setIsSignInOpen(false)} 
+          onSwitchToSignUp={() => {
+            setIsSignInOpen(false);
+            setIsSignUpOpen(true);
+          }}
+        />
+      )}
+      {isSignUpOpen && (
+        <SignUpModal 
+          onClose={() => setIsSignUpOpen(false)} 
+          onSwitchToSignIn={() => {
+            setIsSignUpOpen(false);
+            setIsSignInOpen(true);
+          }}
+        />
+      )}
     </nav>
   );
 }
